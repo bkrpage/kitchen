@@ -15,16 +15,18 @@ buildscript {
 
 repositories {
     jcenter()
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+ext {
+    mapstructVersion = "1.3.0.Final"
 }
 
 apply plugin: 'kotlin' // Required for Kotlin integration
 apply plugin: "kotlin-spring" // https://kotlinlang.org/docs/reference/compiler-plugins.html#spring-support
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
-
-repositories {
-    jcenter()
-}
 
 group = "dev.bradleypage.kitchen"
 version = "0.0.1-SNAPSHOT"
@@ -41,8 +43,19 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    api("com.github.pozo.mapstruct-kotlin:mapstruct-kotlin:1.3.0.Beta2")
+    kapt("com.github.pozo.mapstruct-kotlin:mapstruct-kotlin-processor:1.3.0.Beta2")
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    compile "org.mapstruct:mapstruct:${mapstructVersion}"
+    testCompile 'org.testng:testng:6.10', 'org.easytesting:fest-assert:1.4'
+    apt "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs = [
+            '-Amapstruct.suppressGeneratorTimestamp=true'
+    ]
 }
